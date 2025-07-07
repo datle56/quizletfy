@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, RotateCcw, Trophy, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -30,33 +30,11 @@ const MatchGame: React.FC = () => {
   const [bestTime, setBestTime] = useState<number | null>(null);
   const [shakeCards, setShakeCards] = useState<Set<string>>(new Set());
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
   const quizSet = quizSets.find(set => set.id === id);
 
-  if (!quizSet) {
-    return <NotFound />;
-  }
-
-  // Initialize game
-  useEffect(() => {
-    initializeGame();
-  }, [quizSet]);
-
-  // Timer effect
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (gameStarted && !gameCompleted) {
-      interval = setInterval(() => {
-        setCurrentTime(Date.now() - startTime);
-      }, 100);
-    }
-    return () => clearInterval(interval);
-  }, [gameStarted, gameCompleted, startTime]);
-
-  const initializeGame = () => {
+  const initializeGame = useCallback(() => {
+    if (!quizSet) return;
+    
     // Take first 6 cards for a 4x3 grid (12 cards total)
     const selectedQuizCards = quizSet.cards.slice(0, 6);
     
@@ -90,7 +68,34 @@ const MatchGame: React.FC = () => {
     setGameStarted(false);
     setGameCompleted(false);
     setCurrentTime(0);
-  };
+  }, [quizSet]);
+
+  // Initialize game
+  useEffect(() => {
+    if (!loading && quizSet) {
+      initializeGame();
+    }
+  }, [loading, quizSet, initializeGame]);
+
+  // Timer effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (gameStarted && !gameCompleted) {
+      interval = setInterval(() => {
+        setCurrentTime(Date.now() - startTime);
+      }, 100);
+    }
+    return () => clearInterval(interval);
+  }, [gameStarted, gameCompleted, startTime]);
+
+  // Early returns after all hooks
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  if (!quizSet) {
+    return <NotFound />;
+  }
 
   const handleCardClick = (clickedCard: MatchCard) => {
     if (clickedCard.isMatched || clickedCard.isSelected || selectedCards.length >= 2) {
