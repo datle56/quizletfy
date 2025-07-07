@@ -1,0 +1,49 @@
+{
+  "users": [
+    {
+      "id": "user_001",
+      "email": "demo@gmail.com",
+      "password": "demo123",
+      "username": "quizlette63834452",
+      "avatar": "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+      "joinDate": "2024-01-01",
+      "preferences": {
+        "darkMode": false,
+        "language": "en",
+        "notifications": true,
+        "autoPlay": false,
+        "studyReminders": true
+      },
+      "achievements": [
+        { "id": "1", "title": "100 cards reviewed", "description": "Reviewed 100 flashcards", "date": "2024-01-15", "badge": "🔥", "unlocked": true },
+        { "id": "2", "title": "30-day streak", "description": "Studied for 30 consecutive days", "date": "2024-01-20", "badge": "🏅", "unlocked": true },
+        { "id": "3", "title": "Speed Learner", "description": "Completed a set in under 5 minutes", "date": "2024-01-25", "badge": "⚡", "unlocked": true },
+        { "id": "4", "title": "Perfect Score", "description": "Got 100% accuracy on a test", "date": "2024-01-30", "badge": "🎯", "unlocked": false },
+        { "id": "5", "title": "Night Owl", "description": "Studied after midnight", "date": "2024-02-01", "badge": "🦉", "unlocked": false }
+      ]
+    },
+    {
+      "id": "user_002",
+      "email": "student@example.com",
+      "password": "student123",
+      "username": "studymaster2024",
+      "avatar": "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+      "joinDate": "2024-02-01",
+      "preferences": {
+        "darkMode": true,
+        "language": "en",
+        "notifications": false,
+        "autoPlay": true,
+        "studyReminders": false
+      },
+      "achievements": [
+        { "id": "1", "title": "First Study Set", "description": "Created your first study set", "date": "2024-02-01", "badge": "🎉", "unlocked": true },
+        { "id": "2", "title": "Quick Learner", "description": "Completed 10 cards in one session", "date": "2024-02-02", "badge": "⚡", "unlocked": true }
+      ]
+    }
+  ],
+  "autoLogin": {
+    "enabled": true,
+    "defaultUserId": "user_001"
+  }
+}

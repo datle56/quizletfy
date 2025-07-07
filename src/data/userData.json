@@ -1,0 +1,96 @@
+{
+  "user": {
+    "username": "quizlette63834452",
+    "email": "quizlette63834452@example.com",
+    "avatar": "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1",
+    "joinDate": "2024-01-01",
+    "preferences": {
+      "darkMode": false,
+      "language": "en",
+      "notifications": true,
+      "autoPlay": false,
+      "studyReminders": true
+    },
+    "achievements": [
+      { "id": "1", "title": "100 cards reviewed", "description": "Reviewed 100 flashcards", "date": "2024-01-15", "badge": "🔥", "unlocked": true },
+      { "id": "2", "title": "30-day streak", "description": "Studied for 30 consecutive days", "date": "2024-01-20", "badge": "🏅", "unlocked": true },
+      { "id": "3", "title": "Speed Learner", "description": "Completed a set in under 5 minutes", "date": "2024-01-25", "badge": "⚡", "unlocked": true },
+      { "id": "4", "title": "Perfect Score", "description": "Got 100% accuracy on a test", "date": "2024-01-30", "badge": "🎯", "unlocked": false },
+      { "id": "5", "title": "Night Owl", "description": "Studied after midnight", "date": "2024-02-01", "badge": "🦉", "unlocked": false }
+    ]
+  },
+  "studySessions": [
+    {
+      "id": "session_1",
+      "setId": "1",
+      "setTitle": "Spanish Vocabulary - Beginner",
+      "date": "2024-01-30",
+      "startTime": "14:30",
+      "durationMinutes": 25,
+      "mode": "flashcards",
+      "cards": [
+        { "term": "Hola", "timeSpentSec": 120, "correct": true, "attempts": 1 },
+        { "term": "Gracias", "timeSpentSec": 180, "correct": false, "attempts": 2 },
+        { "term": "Por favor", "timeSpentSec": 90, "correct": true, "attempts": 1 },
+        { "term": "Lo siento", "timeSpentSec": 150, "correct": true, "attempts": 1 },
+        { "term": "Adiós", "timeSpentSec": 75, "correct": true, "attempts": 1 }
+      ]
+    },
+    {
+      "id": "session_2",
+      "setId": "2",
+      "setTitle": "Biology - Cell Structure",
+      "date": "2024-01-29",
+      "startTime": "16:45",
+      "durationMinutes": 18,
+      "mode": "flashcards",
+      "cards": [
+        { "term": "Mitochondria", "timeSpentSec": 60, "correct": true, "attempts": 1 },
+        { "term": "Nucleus", "timeSpentSec": 150, "correct": false, "attempts": 3 },
+        { "term": "Ribosome", "timeSpentSec": 95, "correct": true, "attempts": 1 },
+        { "term": "Endoplasmic Reticulum", "timeSpentSec": 200, "correct": false, "attempts": 2 }
+      ]
+    },
+    {
+      "id": "session_3",
+      "setId": "1",
+      "setTitle": "Spanish Vocabulary - Beginner",
+      "date": "2024-01-28",
+      "startTime": "10:15",
+      "durationMinutes": 15,
+      "mode": "flashcards",
+      "cards": [
+        { "term": "Casa", "timeSpentSec": 80, "correct": true, "attempts": 1 },
+        { "term": "Agua", "timeSpentSec": 120, "correct": true, "attempts": 1 },
+        { "term": "Comida", "timeSpentSec": 160, "correct": false, "attempts": 2 }
+      ]
+    },
+    {
+      "id": "session_4",
+      "setId": "3",
+      "setTitle": "World History - Ancient Rome",
+      "date": "2024-01-27",
+      "startTime": "19:20",
+      "durationMinutes": 22,
+      "mode": "flashcards",
+      "cards": [
+        { "term": "Julius Caesar", "timeSpentSec": 110, "correct": true, "attempts": 1 },
+        { "term": "Augustus", "timeSpentSec": 140, "correct": true, "attempts": 1 },
+        { "term": "Colosseum", "timeSpentSec": 190, "correct": false, "attempts": 2 }
+      ]
+    }
+  ],
+  "performanceStats": {
+    "totalStudyTime": 1440,
+    "sessionsCount": 14,
+    "correctRate": 0.78,
+    "averageSessionTime": 18.5,
+    "totalCardsStudied": 156,
+    "weeklyProgress": [45, 60, 75, 82, 90, 78, 95],
+    "dailyStreak": 7,
+    "longestStreak": 12,
+    "monthlyStats": {
+      "January": { "sessions": 14, "timeMinutes": 1440, "accuracy": 0.78 }
+    }
+  }
+}
