@@ -13,11 +13,10 @@ import {
   Calendar,
   BarChart3,
   Trophy,
-  Moon,
-  Sun,
   Settings
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useThemeStore } from '../store/themeStore';
 import LoadingSpinner from '../components/LoadingSpinner';
 import NotFound from '../components/NotFound';
 import { useQuizSets } from '../hooks/useQuizSets';
@@ -26,8 +25,8 @@ const QuizSetDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { quizSets, loading } = useQuizSets();
+  const { isDarkMode } = useThemeStore();
   const [isFavorited, setIsFavorited] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true);
   const [showControls, setShowControls] = useState(true);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -51,15 +50,11 @@ const QuizSetDetail: React.FC = () => {
   };
 
   const handleLearnMode = () => {
-    // Navigate to learn mode (you can implement this later)
-    console.log('Learn mode clicked');
-    // navigate(`/app/quiz/${id}/learn`);
+    navigate(`/app/quiz/${id}/learn`);
   };
 
   const handleTestMode = () => {
-    // Navigate to test mode (you can implement this later)
-    console.log('Test mode clicked');
-    // navigate(`/app/quiz/${id}/test`);
+    navigate(`/app/quiz/${id}/test`);
   };
 
   const handleMatchMode = () => {
@@ -175,17 +170,6 @@ const QuizSetDetail: React.FC = () => {
             </button>
             
             <div className="flex items-center space-x-4">
-              <button
-                onClick={() => setIsDarkMode(!isDarkMode)}
-                className={`p-2 rounded-lg transition-colors ${
-                  isDarkMode 
-                    ? 'text-gray-400 hover:text-yellow-400 hover:bg-yellow-400/10' 
-                    : 'text-gray-600 hover:text-blue-600 hover:bg-blue-600/10'
-                }`}
-              >
-                {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-              </button>
-              
               <button
                 onClick={() => setShowControls(!showControls)}
                 className={`p-2 rounded-lg transition-colors ${

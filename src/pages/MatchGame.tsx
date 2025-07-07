@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, RotateCcw, Trophy, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useThemeStore } from '../store/themeStore';
 import LoadingSpinner from '../components/LoadingSpinner';
 import NotFound from '../components/NotFound';
 import { useQuizSets } from '../hooks/useQuizSets';
@@ -19,6 +20,7 @@ const MatchGame: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { quizSets, loading } = useQuizSets();
+  const { isDarkMode } = useThemeStore();
   
   const [gameCards, setGameCards] = useState<MatchCard[]>([]);
   const [selectedCards, setSelectedCards] = useState<MatchCard[]>([]);
@@ -173,15 +175,25 @@ const MatchGame: React.FC = () => {
     initializeGame();
   };
 
+  const themeClasses = isDarkMode 
+    ? 'bg-gray-900 text-white' 
+    : 'bg-gray-50 text-gray-900';
+  
+  const headerClasses = isDarkMode 
+    ? 'bg-gray-800 border-gray-700' 
+    : 'bg-white border-gray-200';
+
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className={`min-h-screen ${themeClasses}`}>
       {/* Header */}
-      <div className="bg-gray-800 border-b border-gray-700">
+      <div className={`${headerClasses} border-b`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <button
               onClick={handleBack}
-              className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors"
+              className={`flex items-center space-x-2 transition-colors ${
+                isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+              }`}
             >
               <ArrowLeft className="h-5 w-5" />
               <span>Back</span>
@@ -189,11 +201,13 @@ const MatchGame: React.FC = () => {
             
             <div className="text-center">
               <h1 className="text-lg font-semibold">Match Game</h1>
-              <p className="text-sm text-gray-400">{quizSet.title}</p>
+              <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{quizSet.title}</p>
             </div>
             
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2 bg-gray-700 px-4 py-2 rounded-lg">
+              <div className={`flex items-center space-x-2 px-4 py-2 rounded-lg ${
+                isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
+              }`}>
                 <Clock className="h-5 w-5 text-blue-400" />
                 <span className="font-mono text-lg">
                   {formatTime(currentTime)}
@@ -201,7 +215,9 @@ const MatchGame: React.FC = () => {
               </div>
               <button 
                 onClick={handlePlayAgain}
-                className="p-2 text-gray-400 hover:text-white transition-colors"
+                className={`p-2 transition-colors ${
+                  isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                }`}
               >
                 <RotateCcw className="h-5 w-5" />
               </button>
@@ -219,12 +235,14 @@ const MatchGame: React.FC = () => {
             className="text-center mb-8"
           >
             <h2 className="text-2xl font-bold mb-4">Match the Terms with Definitions</h2>
-            <p className="text-gray-400 mb-6">
+            <p className={`mb-6 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
               Click on a term and then its corresponding definition to make a match. 
               Complete all pairs as quickly as possible!
             </p>
-            <div className="bg-gray-800 rounded-lg p-4 inline-block">
-              <p className="text-sm text-gray-300">
+            <div className={`rounded-lg p-4 inline-block ${
+              isDarkMode ? 'bg-gray-800' : 'bg-gray-200'
+            }`}>
+              <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                 <strong>How to play:</strong> Click any card to start the timer, then find its matching pair.
               </p>
             </div>
@@ -252,7 +270,9 @@ const MatchGame: React.FC = () => {
                   ? 'bg-green-600 border-green-500 opacity-50' 
                   : card.isSelected 
                     ? 'bg-blue-600 border-blue-500 scale-105' 
-                    : 'bg-gray-800 border-gray-700 hover:border-gray-600 hover:bg-gray-750'
+                    : isDarkMode
+                      ? 'bg-gray-800 border-gray-700 hover:border-gray-600 hover:bg-gray-750'
+                      : 'bg-white border-gray-300 hover:border-gray-400 hover:bg-gray-50'
                 }
                 ${card.type === 'term' ? 'border-l-4 border-l-blue-400' : 'border-l-4 border-l-purple-400'}
               `}
@@ -288,11 +308,13 @@ const MatchGame: React.FC = () => {
 
         {/* Progress */}
         <div className="text-center mb-8">
-          <div className="bg-gray-800 rounded-lg p-4 inline-block">
+          <div className={`rounded-lg p-4 inline-block ${
+            isDarkMode ? 'bg-gray-800' : 'bg-gray-200'
+          }`}>
             <div className="text-lg font-semibold mb-2">
               Progress: {matchedPairs.size} / 6 pairs matched
             </div>
-            <div className="w-64 bg-gray-700 rounded-full h-3">
+            <div className={`w-64 rounded-full h-3 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`}>
               <div
                 className="bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full transition-all duration-500"
                 style={{ width: `${(matchedPairs.size / 6) * 100}%` }}
@@ -310,7 +332,9 @@ const MatchGame: React.FC = () => {
               exit={{ opacity: 0, scale: 0.8 }}
               className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
             >
-              <div className="bg-gray-800 rounded-2xl p-8 max-w-md w-full mx-4 border border-gray-700">
+              <div className={`rounded-2xl p-8 max-w-md w-full mx-4 border ${
+                isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+              }`}>
                 <div className="text-center">
                   <motion.div
                     initial={{ scale: 0 }}
@@ -322,22 +346,26 @@ const MatchGame: React.FC = () => {
                   </motion.div>
                   
                   <h3 className="text-3xl font-bold mb-4">🎉 Congratulations!</h3>
-                  <p className="text-gray-300 mb-6">
+                  <p className={`mb-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                     You've successfully matched all pairs!
                   </p>
                   
-                  <div className="bg-gray-700 rounded-lg p-4 mb-6">
+                  <div className={`rounded-lg p-4 mb-6 ${
+                    isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
+                  }`}>
                     <div className="text-2xl font-bold text-blue-400 mb-2">
                       {formatTime(currentTime)}
                     </div>
-                    <div className="text-sm text-gray-400">Your Time</div>
+                    <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Your Time</div>
                     
                     {bestTime && (
-                      <div className="mt-3 pt-3 border-t border-gray-600">
+                      <div className={`mt-3 pt-3 border-t ${
+                        isDarkMode ? 'border-gray-600' : 'border-gray-300'
+                      }`}>
                         <div className="text-lg font-semibold text-green-400">
                           {formatTime(bestTime)}
                         </div>
-                        <div className="text-xs text-gray-400">Personal Best</div>
+                        <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Personal Best</div>
                       </div>
                     )}
                   </div>
@@ -351,7 +379,11 @@ const MatchGame: React.FC = () => {
                     </button>
                     <button
                       onClick={handleBack}
-                      className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                      className={`flex-1 px-6 py-3 rounded-lg font-semibold transition-colors ${
+                        isDarkMode 
+                          ? 'bg-gray-600 hover:bg-gray-700 text-white' 
+                          : 'bg-gray-200 hover:bg-gray-300 text-gray-900'
+                      }`}
                     >
                       Back to Set
                     </button>

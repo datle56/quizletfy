@@ -5,6 +5,8 @@ import LandingPage from '../pages/LandingPage';
 import Dashboard from '../pages/Dashboard';
 import QuizSetDetail from '../pages/QuizSetDetail';
 import FlashcardStudy from '../pages/FlashcardStudy';
+import LearnMode from '../pages/LearnMode';
+import TestMode from '../pages/TestMode';
 import MatchGame from '../pages/MatchGame';
 import CreateSet from '../pages/CreateSet';
 import Analytics from '../pages/Analytics';
@@ -49,6 +51,14 @@ const router = createBrowserRouter([
       {
         path: 'quiz/:id/flashcards',
         element: <FlashcardStudy />
+      },
+      {
+        path: 'quiz/:id/learn',
+        element: <LearnMode />
+      },
+      {
+        path: 'quiz/:id/test',
+        element: <TestMode />
       },
       {
         path: 'quiz/:id/match',

@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, RotateCcw, ChevronLeft, ChevronRight, Volume2, X, Check, Settings } from 'lucide-react';
+import { ArrowLeft, RotateCcw, ChevronLeft, ChevronRight, Volume2, X, Check, Settings, Brain } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useThemeStore } from '../store/themeStore';
 import LoadingSpinner from '../components/LoadingSpinner';
 import NotFound from '../components/NotFound';
 import { useQuizSets } from '../hooks/useQuizSets';
 
-const FlashcardStudy: React.FC = () => {
+const LearnMode: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { quizSets, loading } = useQuizSets();
@@ -20,6 +20,7 @@ const FlashcardStudy: React.FC = () => {
   const [masteredCards, setMasteredCards] = useState<Set<string>>(new Set());
   const [reviewCards, setReviewCards] = useState<Set<string>>(new Set());
   const [showCelebration, setShowCelebration] = useState(false);
+  const [studyQueue, setStudyQueue] = useState<string[]>([]);
 
   if (loading) {
     return <LoadingSpinner />;
@@ -31,18 +32,25 @@ const FlashcardStudy: React.FC = () => {
     return <NotFound />;
   }
 
-  const currentCard = quizSet.cards[currentIndex];
-  const progress = ((currentIndex + 1) / quizSet.cards.length) * 100;
+  // Initialize study queue with adaptive learning
+  useEffect(() => {
+    if (quizSet) {
+      const queue = quizSet.cards.map(card => card.id);
+      setStudyQueue(queue);
+    }
+  }, [quizSet]);
+
+  const currentCard = quizSet.cards.find(card => card.id === studyQueue[currentIndex]);
+  const progress = ((currentIndex + 1) / studyQueue.length) * 100;
   const masteredCount = masteredCards.size;
   const reviewCount = reviewCards.size;
-  const notStudiedCount = quizSet.cards.length - masteredCount - reviewCount;
+  const notStudiedCount = studyQueue.length - masteredCount - reviewCount;
 
   const handleNext = () => {
-    if (currentIndex < quizSet.cards.length - 1) {
+    if (currentIndex < studyQueue.length - 1) {
       setCurrentIndex(currentIndex + 1);
       setIsFlipped(false);
     } else {
-      // Last card - show celebration
       setShowCelebration(true);
     }
   };
@@ -59,12 +67,9 @@ const FlashcardStudy: React.FC = () => {
     setIsFlipped(!isFlipped);
   };
 
-  const toggleStartSide = () => {
-    setShowTerm(!showTerm);
-    setIsFlipped(false);
-  };
-
   const handleReviewAgain = () => {
+    if (!currentCard) return;
+    
     const cardId = currentCard.id;
     setReviewCards(prev => new Set([...prev, cardId]));
     setMasteredCards(prev => {
@@ -72,10 +77,15 @@ const FlashcardStudy: React.FC = () => {
       newSet.delete(cardId);
       return newSet;
     });
+    
+    // Add card back to queue for review
+    setStudyQueue(prev => [...prev, cardId]);
     handleNext();
   };
 
   const handleGotIt = () => {
+    if (!currentCard) return;
+    
     const cardId = currentCard.id;
     setMasteredCards(prev => new Set([...prev, cardId]));
     setReviewCards(prev => {
@@ -96,6 +106,7 @@ const FlashcardStudy: React.FC = () => {
     setMasteredCards(new Set());
     setReviewCards(new Set());
     setShowCelebration(false);
+    setStudyQueue(quizSet.cards.map(card => card.id));
   };
 
   const playAudio = (text: string) => {
@@ -114,59 +125,9 @@ const FlashcardStudy: React.FC = () => {
     ? 'bg-gray-800 border-gray-700' 
     : 'bg-white border-gray-200';
 
-  // Fireworks animation component
-  const Fireworks = () => (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      {[...Array(12)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-2 h-2 bg-yellow-400 rounded-full"
-          initial={{
-            x: '50%',
-            y: '50%',
-            scale: 0,
-          }}
-          animate={{
-            x: `${50 + (Math.random() - 0.5) * 100}%`,
-            y: `${50 + (Math.random() - 0.5) * 100}%`,
-            scale: [0, 1, 0],
-          }}
-          transition={{
-            duration: 2,
-            delay: i * 0.1,
-            repeat: Infinity,
-            repeatDelay: 3,
-          }}
-        />
-      ))}
-      {[...Array(8)].map((_, i) => (
-        <motion.div
-          key={`star-${i}`}
-          className="absolute text-2xl"
-          initial={{
-            x: '50%',
-            y: '50%',
-            scale: 0,
-            rotate: 0,
-          }}
-          animate={{
-            x: `${50 + (Math.random() - 0.5) * 80}%`,
-            y: `${50 + (Math.random() - 0.5) * 80}%`,
-            scale: [0, 1.5, 0],
-            rotate: 360,
-          }}
-          transition={{
-            duration: 2.5,
-            delay: i * 0.2,
-            repeat: Infinity,
-            repeatDelay: 4,
-          }}
-        >
-          ⭐
-        </motion.div>
-      ))}
-    </div>
-  );
+  if (!currentCard) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className={`min-h-screen ${themeClasses}`}>
@@ -185,9 +146,12 @@ const FlashcardStudy: React.FC = () => {
             </button>
             
             <div className="text-center">
-              <h1 className="text-lg font-semibold">{quizSet.title}</h1>
+              <div className="flex items-center justify-center space-x-2 mb-1">
+                <Brain className="h-5 w-5 text-green-500" />
+                <h1 className="text-lg font-semibold">Learn Mode</h1>
+              </div>
               <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                {currentIndex + 1} of {quizSet.cards.length}
+                {quizSet.title} • {currentIndex + 1} of {studyQueue.length}
               </p>
             </div>
             
@@ -199,15 +163,6 @@ const FlashcardStudy: React.FC = () => {
                 }`}
               >
                 <Settings className="h-5 w-5" />
-              </button>
-              
-              <button
-                onClick={toggleStartSide}
-                className={`text-sm font-medium transition-colors ${
-                  isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-500'
-                }`}
-              >
-                Start with: {showTerm ? 'Terms' : 'Definitions'}
               </button>
               
               <button 
@@ -225,7 +180,7 @@ const FlashcardStudy: React.FC = () => {
           <div className="mt-4">
             <div className={`w-full rounded-full h-2 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
               <div
-                className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300"
+                className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${progress}%` }}
               ></div>
             </div>
@@ -249,7 +204,7 @@ const FlashcardStudy: React.FC = () => {
         </div>
       </div>
 
-      {/* Flashcard */}
+      {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="w-full max-w-3xl">
@@ -260,7 +215,6 @@ const FlashcardStudy: React.FC = () => {
                 animate={{ scale: 1, opacity: 1 }}
                 className="relative bg-gradient-to-br from-green-600 to-green-700 rounded-2xl border-2 border-green-500 shadow-2xl p-12 text-center min-h-[300px] flex flex-col justify-center"
               >
-                <Fireworks />
                 <div className="relative z-10">
                   <motion.div
                     initial={{ scale: 0 }}
@@ -268,15 +222,15 @@ const FlashcardStudy: React.FC = () => {
                     transition={{ delay: 0.3 }}
                     className="text-6xl mb-4"
                   >
-                    🎉
+                    🧠
                   </motion.div>
                   
                   <h3 className="text-3xl font-bold mb-4 text-white">
-                    Congratulations!
+                    Learning Complete!
                   </h3>
                   
                   <p className="text-green-100 mb-8 text-lg">
-                    You've completed this study set! You mastered {masteredCount} out of {quizSet.cards.length} terms.
+                    You've mastered {masteredCount} out of {quizSet.cards.length} terms using adaptive learning.
                   </p>
                   
                   <div className="flex justify-center space-x-4">
@@ -286,7 +240,7 @@ const FlashcardStudy: React.FC = () => {
                       whileTap={{ scale: 0.95 }}
                       className="bg-white text-green-700 px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors font-semibold"
                     >
-                      Study Again
+                      Learn Again
                     </motion.button>
                     
                     <motion.button
@@ -301,7 +255,7 @@ const FlashcardStudy: React.FC = () => {
                 </div>
               </motion.div>
             ) : (
-              // Regular Flashcard
+              // Learning Card
               <motion.div
                 className="relative h-80 cursor-pointer"
                 onClick={handleFlip}
@@ -414,7 +368,7 @@ const FlashcardStudy: React.FC = () => {
             
             <div className="text-center">
               <div className="text-lg font-semibold mb-1">
-                Card {currentIndex + 1} / {quizSet.cards.length}
+                Card {currentIndex + 1} / {studyQueue.length}
               </div>
               <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                 {Math.round((masteredCount / quizSet.cards.length) * 100)}% mastered
@@ -423,9 +377,9 @@ const FlashcardStudy: React.FC = () => {
             
             <button
               onClick={handleNext}
-              disabled={currentIndex === quizSet.cards.length - 1 && !showCelebration}
+              disabled={currentIndex === studyQueue.length - 1 && !showCelebration}
               className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition-colors ${
-                currentIndex === quizSet.cards.length - 1 && !showCelebration
+                currentIndex === studyQueue.length - 1 && !showCelebration
                   ? isDarkMode ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 cursor-not-allowed'
                   : isDarkMode 
                     ? 'text-gray-300 hover:text-white hover:bg-gray-800'
@@ -442,4 +396,4 @@ const FlashcardStudy: React.FC = () => {
   );
 };
 
-export default FlashcardStudy;
+export default LearnMode;
